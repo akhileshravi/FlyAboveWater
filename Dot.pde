@@ -75,6 +75,9 @@ class Dot {
         reachedGoal = true;
       } else if (pos.y > height - 30) {//if the dot is in water
         dead = true;
+      } else if (pos.y > rect1Top-3 && pos.y < rect1Bottom+3 && 
+      pos.x > rect1Left-3 && pos.x < rect1Right+3) {
+        dead = true;
       } else {
         if (pos.x < 3) {
           pos.x = 3;
