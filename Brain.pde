@@ -33,11 +33,28 @@ class Brain {
 
   //-------------------------------------------------------------------------------------------------------------------------------------
   //returns a perfect copy of this brain object
-  Brain clone() {
-    Brain clone = new Brain(xMove.length);
+  Brain clone(int newBrainSize) {
+    Brain clone = new Brain(newBrainSize);
+    int prev = -flyNext;
+    int temp;
     for (int i = 0; i < xMove.length; i++) {
       clone.xMove[i] = xMove[i];
       clone.fly[i] = fly[i];
+      if (fly[i] == 1) {
+        prev = i;
+      }
+    }
+    for (int i = xMove.length; i < newBrainSize; i++) {
+      clone.xMove[i] = (int(random(3)) - 1)*int(random(horizontal));
+      if (i - prev >= flyNext) {
+        temp = int(random(2));
+        clone.fly[i] = temp;
+        if (temp == 1) {
+          prev = i;
+        }
+      } else {
+        clone.fly[i] = 0;
+      }
     }
 
     return clone;

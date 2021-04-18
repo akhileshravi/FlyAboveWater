@@ -3,6 +3,7 @@ class Dot {
   PVector vel;
   PVector acc;
   Brain brain;
+  int brainSize;
 
   boolean dead = false;
   boolean reachedGoal = false;
@@ -10,9 +11,9 @@ class Dot {
 
   float fitness = 0;
 
-  Dot() {
-    brain = new Brain(250);//new brain with 1000 instructions
-
+  Dot(int dotBrainSize) {
+    brain = new Brain(dotBrainSize);//new brain with 1000 instructions
+    brainSize = dotBrainSize;
     //start the dots at the bottom of the window with a no velocity or acceleration
     pos = new PVector(width/2, height - 40);
     vel = new PVector(0, 0);
@@ -75,8 +76,7 @@ class Dot {
         reachedGoal = true;
       } else if (pos.y > height - 30) {//if the dot is in water
         dead = true;
-      } else if (pos.y > rect1Top-3 && pos.y < rect1Bottom+3 && 
-      pos.x > rect1Left-3 && pos.x < rect1Right+3) {
+      } else if (dotInRect1()) {
         dead = true;
       } else {
         if (pos.x < 3) {
@@ -99,7 +99,14 @@ class Dot {
   //calculates the fitness
   void calculateFitness() {
     if (reachedGoal) {//if the dot reached the goal then the fitness is based on the amount of steps it took to get there
-      fitness = 1.0/16.0 + 10000.0/(float)(brain.step * brain.step);
+      fitness = 3.0/16.0 + 10000.0/(float)(brain.step * brain.step);
+    } else if (pos.y < rect1Top-3) {
+      float distanceToGoal = dist(pos.x, pos.y, goal.x, goal.y);
+      fitness = 1.0/8.0 + 1.0/(distanceToGoal * distanceToGoal);
+    } else if (dotInRect1()){
+      float distanceToGoal = dist(pos.x, pos.y, goal.x, goal.y);
+      float temp = (abs(width/2 - pos.x) / width) * 4;
+      fitness = temp / 16.0 + 1.0/(distanceToGoal * distanceToGoal);
     } else {//if the dot didn't reach the goal then the fitness is based on how close it is to the goal
       float distanceToGoal = dist(pos.x, pos.y, goal.x, goal.y);
       fitness = 1.0/(distanceToGoal * distanceToGoal);
@@ -108,9 +115,15 @@ class Dot {
 
   //---------------------------------------------------------------------------------------------------------------------------------------
   //clone it 
-  Dot gimmeBaby() {
-    Dot baby = new Dot();
-    baby.brain = brain.clone();//babies have the same brain as their parents
+  Dot gimmeBaby(int newBrainSize) {
+    Dot baby = new Dot(newBrainSize);
+    baby.brain = brain.clone(newBrainSize);//babies have the same brain as their parents
     return baby;
+  }
+  
+  // Check if it is in rect1
+  boolean dotInRect1() {
+    return (pos.y > rect1Top-3 && pos.y < rect1Bottom+3 && 
+      pos.x > rect1Left-3 && pos.x < rect1Right+3);
   }
 }

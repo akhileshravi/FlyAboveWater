@@ -1,9 +1,11 @@
 Population test;
 PVector goal  = new PVector(400, 10);
 int rect1Left, rect1Top, rect1Width, rect1Right, rect1Height, rect1Bottom;
+int genDone = 0;
+
 void setup() {
   size(800, 800); //size of the window
-  frameRate(25);//increase this to make the dots go faster
+  frameRate(100);//increase this to make the dots go faster
   test = new Population(1000);//create a new population with 1000 members
   
   
@@ -44,5 +46,9 @@ void draw() {
 
     test.update();
     test.show();
+  }
+  if ((!(test.gen == genDone)) && test.gen % 8 == 0) {
+    test.brainSize += 5;
+    genDone = test.gen;
   }
 }

@@ -7,11 +7,13 @@ class Population {
   int bestDot = 0;//the index of the best dot in the dots[]
 
   int minStep = 1000;
-
+  int brainSize;
+  boolean reachedGoal = false;
   Population(int size) {
     dots = new Dot[size];
+    brainSize = 45;
     for (int i = 0; i< size; i++) {
-      dots[i] = new Dot();
+      dots[i] = new Dot(brainSize);
     }
   }
 
@@ -69,14 +71,14 @@ class Population {
     calculateFitnessSum();
 
     //the champion lives on 
-    newDots[0] = dots[bestDot].gimmeBaby();
+    newDots[0] = dots[bestDot].gimmeBaby(brainSize);
     newDots[0].isBest = true;
     for (int i = 1; i< newDots.length; i++) {
       //select parent based on fitness
       Dot parent = selectParent();
 
       //get baby from them
-      newDots[i] = parent.gimmeBaby();
+      newDots[i] = parent.gimmeBaby(brainSize);
     }
 
     dots = newDots.clone();
@@ -142,8 +144,12 @@ class Population {
 
     //if this dot reached the goal then reset the minimum number of steps it takes to get to the goal
     if (dots[bestDot].reachedGoal) {
+      reachedGoal = true;
       minStep = dots[bestDot].brain.step;
       println("Generation:",gen," Step:", minStep);
+    } else {
+      println("Generation:",gen, brainSize, 
+        dots[bestDot+1].brainSize, dots[10].brain.xMove.length);
     }
   }
 }
